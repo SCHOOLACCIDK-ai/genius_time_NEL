@@ -1,1 +1,166 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0912">
+  <meta name="description" content="Compare LiquidBounce, Meteor Client, Lunar Client, and Badlion Client.">
+  <title>BlockBench — Minecraft Client Arena</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="background-glow"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-icon">B</span>
+      <span>BLOCK<span class="accent">BENCH</span></span>
+    </a>
+
+    <nav>
+      <a href="#clients">Clients</a>
+      <a href="#compare">Compare</a>
+      <a href="#about">About</a>
+    </nav>
+
+    <span class="status"><i></i> CLIENT DATABASE</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">
+          <span class="pulse"></span>
+          THE MINECRAFT CLIENT DATABASE
+        </div>
+
+        <h1>Find your<br>perfect <span>client.</span></h1>
+
+        <p>
+          Four clients. Different playstyles. One place to compare
+          features, customization, performance, and usability.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button primary" href="#clients">Explore clients ↘</a>
+          <a class="button secondary" href="#compare">Compare features</a>
+        </div>
+
+        <div class="hero-stats">
+          <div><strong>04</strong><span>CLIENTS</span></div>
+          <div><strong>05</strong><span>RATING CATEGORIES</span></div>
+          <div><strong>100%</strong><span>COMPARISON FOCUS</span></div>
+        </div>
+      </div>
+
+      <div class="hero-art">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="hero-cube">B</div>
+        <div class="floating-tag tag-top">✦ CLIENT SELECT</div>
+        <div class="floating-tag tag-bottom">
+          <span class="live-dot"></span> LOADING POSSIBILITIES...
+        </div>
+        <div class="art-caption">YOUR GAME. YOUR SETUP.</div>
+      </div>
+    </section>
+
+    <section class="featured">
+      <div class="featured-icon">L</div>
+      <div class="featured-copy">
+        <div class="eyebrow purple-text">EDITOR'S SPOTLIGHT</div>
+        <h2>LiquidBounce <span class="pill">FEATURED</span></h2>
+        <p>
+          Deep customization, scripts, and configurable modules make
+          LiquidBounce a compelling pick for players who want control.
+        </p>
+        <a href="https://liquidbounce.net/" target="_blank" rel="noopener noreferrer">
+          Visit official website ↗
+        </a>
+      </div>
+      <div class="featured-side">
+        <span>OUR FOCUS</span>
+        <strong>Customization</strong>
+        <span>Compare it with all three alternatives below.</span>
+      </div>
+    </section>
+
+    <section id="clients" class="section">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">THE LINEUP</div>
+          <h2>Choose your client<span class="accent">.</span></h2>
+          <p>Explore the differences and find the right fit.</p>
+        </div>
+        <span id="client-count" class="count-label">LOADING CLIENTS...</span>
+      </div>
+
+      <div class="toolbar">
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="search" type="search" placeholder="Search clients or features..." aria-label="Search clients">
+        </label>
+        <select id="sort" aria-label="Sort clients">
+          <option value="featured">Featured first</option>
+          <option value="name">Name A–Z</option>
+          <option value="customization">Customization rating</option>
+          <option value="performance">Performance rating</option>
+          <option value="ease">Ease of use rating</option>
+        </select>
+      </div>
+
+      <div id="client-grid" class="client-grid">
+        <div class="loading-card">Loading client database...</div>
+      </div>
+    </section>
+
+    <section id="compare" class="section compare-section">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">SIDE BY SIDE</div>
+          <h2>Make the comparison<span class="accent">.</span></h2>
+          <p>Select up to four clients to compare their listed ratings.</p>
+        </div>
+      </div>
+
+      <div id="compare-picker" class="compare-picker"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="compare-head"></thead>
+          <tbody id="compare-body">
+            <tr><td>Loading comparisons...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="disclaimer">
+        Ratings are illustrative editorial estimates, not benchmark results.
+        Actual performance and compatibility depend on hardware, Minecraft
+        version, configuration, and server rules.
+      </p>
+    </section>
+
+    <section id="about" class="about">
+      <div>
+        <div class="eyebrow">BUILT FOR PLAYERS</div>
+        <h2>Less guessing.<br><span class="accent">More playing.</span></h2>
+      </div>
+      <p>
+        BlockBench is an independent comparison project. We compare
+        customization, PvP-oriented features, performance, mod support,
+        and ease of use. Always check official sources for the latest
+        downloads and supported Minecraft versions.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#"><span class="brand-icon">B</span> BLOCKBENCH</a>
+    <span>Fan-made comparison project · Not affiliated with the listed clients.</span>
+    <a href="#clients">Back to top ↑</a>
+  </footer>
+</body>
+</html>
