@@ -7,25 +7,32 @@ const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
 
 const clients = [
-  {
-    id: "liquidbounce",
-    name: "LiquidBounce",
-    type: "Utility / combat client",
-    color: "#b58aff",
-    tagline: "Built for customization.",
-    description:
-      "An open-source Minecraft client focused on extensive customization, scripts, and configurable modules.",
-    bestFor: "Advanced customization",
-    openSource: true,
-    customization: 5,
-    pvp: 5,
-    performance: 3,
-    modSupport: 4,
-    ease: 2,
-    version: "Check official downloads",
-    features: ["Open source", "Scripts", "Configurable modules"],
-    website: "https://liquidbounce.net/"
-  },
+  
+{
+  id: "liquidbounce",
+  name: "LiquidBounce",
+  type: "Utility / combat client",
+  color: "#b58aff",
+  tagline: "Built for customization.",
+  description:
+    "An open-source Minecraft client focused on extensive customization, scripts, and configurable modules.",
+  bestFor: "Advanced customization",
+  openSource: true,
+  customization: 5,
+  pvp: 5,
+  performance: 4,
+  modSupport: 5,
+  ease: 4,
+  version: "Check official downloads",
+  features: [
+    "Open source",
+    "Scripts",
+    "Configurable modules",
+    "Combat modules",
+    "Custom HUD"
+  ],
+  website: "https://liquidbounce.net/"
+},
   {
     id: "meteor",
     name: "Meteor Client",
