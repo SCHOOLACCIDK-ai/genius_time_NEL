@@ -1,7 +1,7 @@
-
 const http = require("node:http");
 const fs = require("node:fs");
-const path = require("node:path");
+const path = node = require("node:path"); // keep your path/fs imports
+const { Server } = require("socket.io"); // 1. Import socket.io
 
 const PORT = process.env.PORT || 3000;
 
@@ -125,6 +125,22 @@ const server = http.createServer((req, res) => {
     });
 
     res.end(req.method === "HEAD" ? undefined : data);
+  });
+});
+
+// 2. Attach Socket.io to your existing HTTP server
+const io = new Server(server);
+
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  socket.on("trigger-funny", () => {
+    console.log(`Funny sound triggered by ${socket.id}! Broadcasting to everyone.`);
+    io.emit("play-funny-sound"); // Broadcasts to all connected tabs/users
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
   });
 });
 
