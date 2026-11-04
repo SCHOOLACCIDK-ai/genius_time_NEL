@@ -1,97 +1,28 @@
+<!-- Socket.io Real-Time Client for funny(1) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      const socket = io();
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minecraft Client Comparison</title>
-  <link rel="stylesheet" href="/style.css">
-  <script src="/app.js" defer></script>
-</head>
-<body>
-  <header>
-    <h1>Minecraft Client Comparison</h1>
-    <p>My Genius Time Project</p>
-    <nav>
-      <a href="#clients">Clients</a>
-      <a href="#compare">Compare</a>
-      <a href="#about">About</a>
-    </nav>
-  </header>
+      // Fun cartoon boing sound effect (you can change this URL to any direct .mp3 link)
+      const soundUrl = 'https://www.myinstants.com/media/sounds/cartoon-boing.mp3';
+      const audio = new Audio(soundUrl);
 
-  <main>
-    <section class="intro">
-      <h2>Which Minecraft client is best?</h2>
-      <p>
-        I am comparing four Minecraft clients.
-      </p>
-      <a class="main-button" href="#clients">See the clients</a>
-    </section>
+      // Listen for the broadcast from the server when anyone types funny(1)
+      socket.on('play-funny-sound', () => {
+          audio.currentTime = 0; // Rewind to the start so it can be spam-clicked
+          audio.play().catch(err => {
+              console.log("Audio playback blocked by browser policy until page interaction:", err);
+          });
+      });
 
-    <section class="featured">
-      <h2>My featured client: LiquidBounce</h2>
-      <p>
-        LiquidBounce is the client that i use and recomend.
-      </p>
-      <a href="https://liquidbounce.net/" target="_blank" rel="noopener noreferrer">
-        Go to Liquidbounce's official site.
-      </a>
-    </section>
-
-    <section id="clients">
-      <h2>Meet the clients</h2>
-      <p>Search the most popular clients and sort them.</p>
-
-      <div class="controls">
-        <input id="search" type="search" placeholder="Search clients..." aria-label="Search clients">
-        <select id="sort" aria-label="Sort clients">
-          <option value="featured">Featured first</option>
-          <option value="name">Name A-Z</option>
-          <option value="customization">Customization</option>
-          <option value="performance">Performance</option>
-          <option value="ease">Ease of use</option>
-        </select>
-      </div>
-
-      <div id="client-count"></div>
-      <div id="client-grid" class="client-grid">
-        <p>Loading clients...</p>
-      </div>
-    </section>
-
-    <section id="compare">
-      <h2>Compare the clients</h2>
-      <p>Choose which clients you want to compare.</p>
-
-      <div id="compare-picker" class="compare-picker"></div>
-
-      <div class="table-wrapper">
-        <table>
-          <thead id="compare-head"></thead>
-          <tbody id="compare-body">
-            <tr><td>Loading comparison...</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p class="note">
-        I have to add smth here idk.
-      </p>
-    </section>
-
-    <section id="about">
-      <h2>About my project</h2>
-      <p>
-        The goal of my genius time project is to help you choose the minecraft client that you can start using.
-      </p>
-    </section>
-  </main>
-
-  <footer>
-    <p>my branding ©</p>
-    <a href="https://oadij9qw8.my.canva.site/sammy-kid"
-       target="_blank"
-       rel="noopener noreferrer">Sam's turn ↗</a>
-  </footer>
+      // Expose the funny(n) function globally in the browser's developer console
+      window.funny = function(n) {
+          if (n === 1) {
+              console.log("Sending funny signal to everyone...");
+              socket.emit('trigger-funny');
+          } else {
+              console.log("Invalid argument. Try typing: funny(1)");
+          }
+      };
+  </script>
 </body>
-</html>
