@@ -1,292 +1,132 @@
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
 
-const express = require("express");
-const fs = require("fs");
-const path = require("path");
-
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-const SITE_DIR = __dirname;
-
-const FILES = [
-  "index.html",
-  "style.css",
-  "app.js"
+const clients = [
+  {
+    id: "liquidbounce",
+    name: "LiquidBounce",
+    type: "Utility / combat client",
+    color: "#5579bd",
+    description: "An open-source client with extensive customization, scripts, and configurable modules.",
+    bestFor: "Customization",
+    openSource: true,
+    customization: 5,
+    pvp: 5,
+    performance: 4,
+    modSupport: 5,
+    ease: 5,
+    features: ["Open source", "Scripts", "Custom modules", "Custom HUD"],
+    website: "https://liquidbounce.net/"
+  },
+  {
+    id: "meteor",
+    name: "Meteor Client",
+    type: "Utility client",
+    color: "#428c70",
+    description: "An open-source Fabric utility client with many configurable modules.",
+    bestFor: "Utility modules",
+    openSource: true,
+    customization: 5,
+    pvp: 4,
+    performance: 4,
+    modSupport: 5,
+    ease: 3,
+    features: ["Open source", "Fabric", "Utility modules"],
+    website: "https://meteorclient.com/"
+  },
+  {
+    id: "lunar",
+    name: "Lunar Client",
+    type: "Client / launcher",
+    color: "#477fb8",
+    description: "A Minecraft client and launcher known for cosmetics, performance features, and supported mods.",
+    bestFor: "Everyday PvP",
+    openSource: false,
+    customization: 3,
+    pvp: 4,
+    performance: 5,
+    modSupport: 3,
+    ease: 5,
+    features: ["Cosmetics", "Performance features", "Built-in mods"],
+    website: "https://www.lunarclient.com/"
+  },
+  {
+    id: "badlion",
+    name: "Badlion Client",
+    type: "Client / launcher",
+    color: "#ad853b",
+    description: "A Minecraft client with integrated mods, HUD options, and cosmetics.",
+    bestFor: "Convenience",
+    openSource: false,
+    customization: 3,
+    pvp: 4,
+    performance: 4,
+    modSupport: 3,
+    ease: 5,
+    features: ["Integrated mods", "HUD customization", "Cosmetics"],
+    website: "https://www.badlion.net/"
+  }
 ];
 
-app.use(express.json({ limit: "200kb" }));
+const types = {
+  ".html": "text/html; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8"
+};
 
-// Keep original website files in memory.
-const originalFiles = {};
+const server = http.createServer((req, res) => {
+  const url = new URL(req.url, `http://${req.headers.host || "localhost"}`);
 
-for (const file of FILES) {
-  const filePath = path.join(SITE_DIR, file);
-
-  if (!fs.existsSync(filePath)) {
-    throw new Error("Missing website file: " + file);
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    res.writeHead(405);
+    return res.end("Method not allowed");
   }
 
-  originalFiles[file] = fs.readFileSync(filePath, "utf8");
-}
-
-// Five-minute reset timer.
-let resetTimer = null;
-
-function resetWebsite() {
-  for (const file of FILES) {
-    fs.writeFileSync(
-      path.join(SITE_DIR, file),
-      originalFiles[file],
-      "utf8"
-    );
-  }
-
-  resetTimer = null;
-  console.log("Website restored to original files.");
-}
-
-function scheduleReset() {
-  if (resetTimer) {
-    clearTimeout(resetTimer);
-  }
-
-  resetTimer = setTimeout(() => {
-    resetWebsite();
-  }, 5 * 60 * 1000);
-
-  console.log("Website reset scheduled in 5 minutes.");
-}
-
-// Homepage.
-app.get("/", (req, res, next) => {
-  res.sendFile(path.join(SITE_DIR, "index.html"));
-});
-
-// Code editor.
-app.get("/code", (req, res) => {
-  res.send(editorPage);
-});
-
-// Read website files.
-app.get("/code/files/:file", (req, res) => {
-  const file = req.params.file;
-
-  if (!FILES.includes(file)) {
-    return res.status(404).send("File not found");
-  }
-
-  res.type("text/plain").send(
-    fs.readFileSync(path.join(SITE_DIR, file), "utf8")
-  );
-});
-
-// Save website files.
-app.post("/code/files/:file", (req, res) => {
-  const file = req.params.file;
-
-  if (!FILES.includes(file)) {
-    return res.status(404).json({
-      error: "File not allowed"
+  if (url.pathname === "/api/clients") {
+    res.writeHead(200, {
+      "Content-Type": "application/json; charset=utf-8"
     });
+    return res.end(JSON.stringify(clients));
   }
 
-  if (typeof req.body.content !== "string") {
-    return res.status(400).json({
-      error: "Invalid content"
+  if (url.pathname.startsWith("/api/clients/")) {
+    const id = url.pathname.split("/").pop();
+    const client = clients.find(item => item.id === id);
+
+    res.writeHead(client ? 200 : 404, {
+      "Content-Type": "application/json; charset=utf-8"
     });
+
+    return res.end(JSON.stringify(client || { error: "Client not found" }));
   }
 
-  fs.writeFileSync(
-    path.join(SITE_DIR, file),
-    req.body.content,
-    "utf8"
-  );
+  const requested = url.pathname === "/" ? "index.html" : url.pathname.slice(1);
+  const file = path.resolve(__dirname, requested);
 
-  scheduleReset();
+  if (!file.startsWith(__dirname + path.sep)) {
+    res.writeHead(403);
+    return res.end("Forbidden");
+  }
 
-  res.json({
-    success: true,
-    message: "Saved! Resetting in 5 minutes."
+  fs.readFile(file, (err, data) => {
+    if (err) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      return res.end("File not found");
+    }
+
+    res.writeHead(200, {
+      "Content-Type": types[path.extname(file)] || "application/octet-stream",
+      "X-Content-Type-Options": "nosniff"
+    });
+
+    res.end(req.method === "HEAD" ? undefined : data);
   });
 });
 
-// Editor interface.
-const editorPage = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Website Code Editor</title>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 25px;
-  background: #101010;
-  color: white;
-  font-family: Arial, sans-serif;
-}
-
-.container {
-  max-width: 1100px;
-  margin: auto;
-}
-
-h1 {
-  margin-bottom: 8px;
-}
-
-p {
-  color: #aaa;
-}
-
-select, button {
-  padding: 12px 16px;
-  border: none;
-  border-radius: 7px;
-  margin: 10px 5px 10px 0;
-}
-
-select {
-  background: #252525;
-  color: white;
-}
-
-button {
-  background: #5865f2;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: .8;
-}
-
-textarea {
-  width: 100%;
-  height: 65vh;
-  padding: 18px;
-  resize: vertical;
-  background: #181818;
-  color: #00ff99;
-  border: 1px solid #333;
-  border-radius: 10px;
-  font-family: monospace;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-#status {
-  color: #00ff99;
-}
-
-.warning {
-  color: #ffb84d;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<h1>Website Code Editor</h1>
-<p>Edit your website directly.</p>
-
-<p class="warning">
-Changes automatically reset 5 minutes after the latest save.
-</p>
-
-<select id="file">
-<option value="index.html">index.html</option>
-<option value="style.css">style.css</option>
-<option value="app.js">app.js</option>
-</select>
-
-<button onclick="loadFile()">Load File</button>
-<button onclick="saveFile()">Save Changes</button>
-
-<textarea id="editor" spellcheck="false"
-placeholder="Loading code..."></textarea>
-
-<p id="status">Ready.</p>
-
-</div>
-
-<script>
-const editor = document.getElementById("editor");
-const fileSelect = document.getElementById("file");
-const status = document.getElementById("status");
-
-async function loadFile() {
-  const file = fileSelect.value;
-
-  status.textContent = "Loading...";
-
-  try {
-    const response = await fetch(
-      "/code/files/" + encodeURIComponent(file)
-    );
-
-    if (!response.ok) {
-      throw new Error("Could not load file");
-    }
-
-    editor.value = await response.text();
-    status.textContent = "Loaded " + file;
-  } catch (error) {
-    status.textContent = error.message;
-  }
-}
-
-async function saveFile() {
-  const file = fileSelect.value;
-
-  status.textContent = "Saving...";
-
-  try {
-    const response = await fetch(
-      "/code/files/" + encodeURIComponent(file),
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          content: editor.value
-        })
-      }
-    );
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.error || "Save failed");
-    }
-
-    status.textContent = result.message;
-  } catch (error) {
-    status.textContent = error.message;
-  }
-}
-
-fileSelect.addEventListener("change", loadFile);
-
-loadFile();
-</script>
-
-</body>
-</html>
-`;
-
-// Serve website assets.
-app.use(express.static(SITE_DIR));
-
-// Start server.
-app.listen(PORT, () => {
-  console.log("Website running on port " + PORT);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Website running on port ${PORT}`);
 });
