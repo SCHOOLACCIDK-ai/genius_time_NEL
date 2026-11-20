@@ -1,4 +1,3 @@
-
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -18,7 +17,7 @@ const clients = [
     pvp: 5,
     performance: 4,
     modSupport: 5,
-    ease: 4,
+    ease: 5,
     features: ["Open source", "Scripts", "Custom modules", "Custom HUD"],
     website: "https://liquidbounce.net/"
   },
